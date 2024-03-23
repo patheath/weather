@@ -1,7 +1,17 @@
 package main
 
-import "fmt"
+import (
+	"log"
+
+	"github.com/patheath/weather/internal/repository"
+)
 
 func main() {
-	fmt.Println("Hello, World!")
+
+	// Request weather data
+	w := repository.Weather()
+
+	for _, v := range w {
+		log.Println(v)
+	}
 }
