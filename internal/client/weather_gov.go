@@ -1,23 +1,20 @@
-package repository
+package client
 
 import (
 	"io"
 	"log"
 	"net/http"
+
+	"github.com/patheath/weather/internal/model"
 )
 
-type weather struct {
-	hourly []string
-}
-
-func Weather() []string {
-
+func FetchWeather() model.Weather {
 	resp := getWeather()
 	w := readResponse(resp)
-	return w.hourly
+	return w
 }
 
-func readResponse(resp *http.Response) weather {
+func readResponse(resp *http.Response) model.Weather {
 
 	defer resp.Body.Close()
 
@@ -27,13 +24,18 @@ func readResponse(resp *http.Response) weather {
 		log.Fatalln(err)
 	}
 	sb := string(body)
-	log.Printf(sb)
+	//log.Printf(sb)
 
-	h := []string{}
-	h = append(h, sb)
+	h := []model.Forecast{}
+	f := model.Forecast{
+		Hour: 1,
+		Temp: 30,
+		Short: sb[:10],
+	}
+	h = append(h, f)
 
-	return weather{
-		hourly: h,
+	return model.Weather{
+		Hourly: h,
 	}
 }
 
