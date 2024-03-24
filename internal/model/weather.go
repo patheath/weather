@@ -9,9 +9,9 @@ type Weather struct {
 }
 
 type Forecast struct {
-	Hour  int
-	Temp  int
-	Short string
+	Hour  int    `json:"number"`
+	Temp  int    `json:"temperature"`
+	Short string `json:"shortForecast"`
 }
 
 func (w Weather) Display() {
