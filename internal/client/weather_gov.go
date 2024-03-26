@@ -84,7 +84,7 @@ func readResponse(resp *http.Response) model.Weather {
 
 	h := []model.Forecast{}
 	var f model.Forecast
-	for _, v := range result.Properties.Periods {
+	for _, v := range result.Properties.Periods[:10] {
 		f.Hour = v.Number
 		f.Temp = v.Temperature
 		f.Short = v.ShortForecast
