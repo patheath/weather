@@ -15,14 +15,16 @@ type Forecast struct {
 	Short string `json:"shortForecast"`
 }
 
+var now = time.Now  // allows for testing
+
 func (w Weather) Display() {
 	for _, v := range w.Hourly {
-		println(fmt.Sprintf("Hour %v: %v - %v", displayTime(v.Hour), v.Temp, v.Short))
+		fmt.Printf("%v: %v - %v\n", displayTime(v.Hour), v.Temp, v.Short)
 	}
 }
 
 func displayTime(hour int) string {
 	toAdd := time.Duration(hour) * time.Hour
-	currentTime := time.Now().Add(toAdd)
+	currentTime := now().Add(toAdd)
 	return fmt.Sprintf("The hour is %v", currentTime.Format("2006-1-2: 3pm"))
 }

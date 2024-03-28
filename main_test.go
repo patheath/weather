@@ -4,30 +4,10 @@ import (
 	"testing"
 
 	"github.com/stretchr/testify/assert"
-
-	"bytes"
-	"io"
-	"os"
+	"github.com/patheath/weather/internal/utils"
 )
 
 func TestMain(t *testing.T) {
-	mainStdout := captureStdout(main)
-
+	mainStdout := utils.CaptureStdout(main)
 	assert.Equal(t, mainStdout, "Hello, World!\n")
-}
-
-// Source https://gist.github.com/mindscratch/0faa78bd3c0005d080bf
-func captureStdout(f func()) string {
-	old := os.Stdout
-	r, w, _ := os.Pipe()
-	os.Stdout = w
-
-	f()
-
-	w.Close()
-	os.Stdout = old
-
-	var buf bytes.Buffer
-	io.Copy(&buf, r)
-	return buf.String()
 }
