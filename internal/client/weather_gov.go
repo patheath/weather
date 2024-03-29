@@ -66,6 +66,13 @@ func FetchWeather() model.Weather {
 	return w
 }
 
+func min(a, b int) int {
+    if a < b {
+        return a
+    }
+    return b
+}
+
 func readResponse(resp *http.Response) model.Weather {
 
 	defer resp.Body.Close()
@@ -84,7 +91,8 @@ func readResponse(resp *http.Response) model.Weather {
 
 	h := []model.Forecast{}
 	var f model.Forecast
-	for _, v := range result.Properties.Periods[:10] {
+	n := min(len(result.Properties.Periods), 10)
+	for _, v := range result.Properties.Periods[:n] {
 		f.Hour = v.Number
 		f.Temp = v.Temperature
 		f.Short = v.ShortForecast
