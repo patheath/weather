@@ -24,7 +24,16 @@ type Response struct {
 	Properties Properties `json:"properties"`
 }
 
-func TestReadResponse(t *testing.T) {
+func TestReadResponseBadStatusCode(t *testing.T) {
+
+	ts := httptest.NewServer(http.NotFoundHandler())
+	defer ts.Close()
+
+	_, err := getWeather(ts.URL)
+	assert.Contains(t, err.Error(), http.StatusText(http.StatusNotFound))
+}
+
+func TestReadResponseOK(t *testing.T) {
 
 	resp := &Response{
 		Properties: Properties{
@@ -36,33 +45,40 @@ func TestReadResponse(t *testing.T) {
 		},
 	}
 
-	// TODO - return my JSON instead of String in reponse
-	// add checks to test
-
-	ts := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Content-Type", "application/json")
-		jsonResp, err := json.Marshal(resp)
-		if err != nil {
-			log.Fatalf("Error happened in JSON marshal. Err: %s", err)
-		}
-		_, err = w.Write(jsonResp)
-		if err != nil {
-			log.Fatalf("Error sending JSON response. Err: %s", err)
-		}
-	}))
-	defer ts.Close()
-
-	res, err := http.Get(ts.URL)
+	jsonResp, err := json.Marshal(resp)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("Error converting response to JSON")
 	}
 
-	w := readResponse(res)
+	w, _ := readResponse(jsonResp)
 
 	check := w.Hourly[len(resp.Properties.Periods)-1]
 
 	assert.Contains(t, check.Short, "Very hot and humid")
 	assert.Equal(t, check.Temp, 103)
 	assert.Equal(t, check.Hour, 9)
+
+}
+
+func TestReadResponseWrongContent(t *testing.T) {
+
+	res := []byte("Bad response")
+	_, err := readResponse(res)
+	assert.Contains(t, err.Error(), "Error unmarshalling response")
+}
+
+func TestReadResponseEmpty(t *testing.T) {
+
+	resp := &Response{
+		Properties: Properties{},
+	}
+
+	jsonResp, err := json.Marshal(resp)
+	if err != nil {
+		log.Fatal("Error converting response to JSON")
+	}
+
+	_, err = readResponse(jsonResp)
+	assert.Equal(t, err.Error(), "No results from weather.gov provider")
 
 }
