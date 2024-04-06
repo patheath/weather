@@ -29,7 +29,9 @@ func TestReadResponseBadStatusCode(t *testing.T) {
 	ts := httptest.NewServer(http.NotFoundHandler())
 	defer ts.Close()
 
-	_, err := getWeather(ts.URL)
+	wg := WeatherGov{Url: ts.URL}
+
+	_, err := wg.GetWeather()
 	assert.Contains(t, err.Error(), http.StatusText(http.StatusNotFound))
 }
 
@@ -50,7 +52,8 @@ func TestReadResponseOK(t *testing.T) {
 		log.Fatal("Error converting response to JSON")
 	}
 
-	w, _ := readResponse(jsonResp)
+	wg := WeatherGov{Url: "example.com"}
+	w, _ := wg.ReadResponse(jsonResp)
 
 	check := w.Hourly[len(resp.Properties.Periods)-1]
 
@@ -63,7 +66,8 @@ func TestReadResponseOK(t *testing.T) {
 func TestReadResponseWrongContent(t *testing.T) {
 
 	res := []byte("Bad response")
-	_, err := readResponse(res)
+	wg := WeatherGov{Url: "example.com"}
+	_, err := wg.ReadResponse(res)
 	assert.Contains(t, err.Error(), "Error unmarshalling response")
 }
 
@@ -78,7 +82,14 @@ func TestReadResponseEmpty(t *testing.T) {
 		log.Fatal("Error converting response to JSON")
 	}
 
-	_, err = readResponse(jsonResp)
+	wg := WeatherGov{Url: "example.com"}
+	_, err = wg.ReadResponse(jsonResp)
 	assert.Equal(t, err.Error(), "No results from weather.gov provider")
+
+}
+
+func TestDisplayName(t *testing.T) {
+	wg := WeatherGov{Url: "example.com"}
+	assert.Contains(t, wg.DisplayName(), "weather.gov")
 
 }

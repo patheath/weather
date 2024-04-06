@@ -10,10 +10,12 @@ const NumberHours = 10  // Number of hours to display
 
 func main() {
 
-	w, err := client.FetchWeather()
+	wg := client.WeatherGov{Url: client.Url}
+	w, err := client.FetchWeather(wg)
 	if err != nil {
 		fmt.Print("Error fetching weather: ", err)
 		return
 	}
+	println(wg.DisplayName())
 	w.Display()
 }
