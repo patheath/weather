@@ -1,16 +1,27 @@
 package main
 
 import (
+	"strings"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/patheath/weather/internal/model"
 	"github.com/patheath/weather/internal/utils"
+	"github.com/stretchr/testify/assert"
 )
 
-// TODO seperate out as an integration/e2e test not unit test
-// as it reaches out to api's
+// Only runs when short option is not specified
+func TestMainIntegration(t *testing.T) {
 
-func TestMain(t *testing.T) {
+	if testing.Short() {
+		t.Skip("skipping integration test")
+	}
+
 	mainStdout := utils.CaptureStdout(main)
-	assert.Equal(t, mainStdout, "Hello, World!\n")
+
+	// Will fail is API is down but that is by design
+	n := strings.Count(mainStdout, "\n")
+	assert.Equal(t, n, model.HOURS)
+
+	n = strings.Count(mainStdout, "The hour is")
+	assert.Equal(t, n, model.HOURS)
 }

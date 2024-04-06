@@ -90,7 +90,7 @@ func readResponse(body []byte) (*model.Weather, error) {
 		return nil, fmt.Errorf("Error unmarshalling response: %s", err)
 	}
 
-	n := min(len(result.Properties.Periods), 10)
+	n := min(len(result.Properties.Periods), model.HOURS)
 	if n == 0 {
 		return nil, errors.New("No results from weather.gov provider")
 	}

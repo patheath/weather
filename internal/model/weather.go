@@ -5,6 +5,8 @@ import (
 	"time"
 )
 
+const HOURS = 10 // Number of Weather Hours to report
+
 type Weather struct {
 	Hourly []Forecast // "<number (hour from now)>: <tempature> <shortForecast>"
 }
