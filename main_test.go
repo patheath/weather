@@ -20,8 +20,8 @@ func TestMainIntegration(t *testing.T) {
 
 	// Will fail is API is down but that is by design
 	n := strings.Count(mainStdout, "\n")
-	assert.Equal(t, n, model.HOURS)
+	assert.Equal(t, n, 2*model.HOURS)
 
 	n = strings.Count(mainStdout, "The hour is")
-	assert.Equal(t, n, model.HOURS)
+	assert.Equal(t, n, 2*model.HOURS)
 }

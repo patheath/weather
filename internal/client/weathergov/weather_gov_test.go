@@ -1,4 +1,4 @@
-package client
+package weathergov
 
 import (
 	"encoding/json"
