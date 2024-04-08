@@ -149,7 +149,7 @@ func (wa WeatherApi) ReadResponse(body []byte) (*model.Weather, error) {
 		return nil, fmt.Errorf("Error unmarshalling response: %s", err)
 	}
 
-	if len(result.Forecast.Forecastday) == 0{
+	if len(result.Forecast.Forecastday) == 0 {
 		return nil, errors.New("No results from weatherapi.com provider")
 	}
 

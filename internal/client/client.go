@@ -2,7 +2,6 @@ package client
 
 import "github.com/patheath/weather/internal/model"
 
-
 type Api interface {
 	GetWeather() ([]byte, error)
 	ReadResponse([]byte) (*model.Weather, error)
@@ -19,11 +18,4 @@ func FetchWeather(wa Api) (*model.Weather, error) {
 		return nil, err
 	}
 	return w, nil
-}
-
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
 }

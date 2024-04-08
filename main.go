@@ -1,32 +1,49 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/patheath/weather/internal/client"
 	"github.com/patheath/weather/internal/client/weatherapi"
 	"github.com/patheath/weather/internal/client/weathergov"
+	"github.com/patheath/weather/internal/model"
 )
 
 const NumberHours = 10 // Number of hours to display
 
+type result struct {
+	w    *model.Weather
+	name string
+	err  error
+}
+
 func main() {
 
-	wa := weatherapi.WeatherApi{Url: weatherapi.Url}
-	w, err := client.FetchWeather(wa)
-	if err != nil {
-		fmt.Print("Error fetching weather: ", err)
-		return
+	clients := []client.Api{
+		weatherapi.WeatherApi{Url: weatherapi.Url},
+		weathergov.WeatherGov{Url: weathergov.Url},
 	}
-	println(wa.DisplayName())
-	w.Display()
 
-	wg := weathergov.WeatherGov{Url: weathergov.Url}
-	w, err = client.FetchWeather(wg)
-	if err != nil {
-		fmt.Print("Error fetching weather: ", err)
-		return
+	ch := make(chan result, len(clients))
+
+	for _, c := range clients {
+		go func() {
+			name := c.DisplayName()
+			w, err := client.FetchWeather(c)
+			ch <- result{
+				w:    w,
+				name: name,
+				err:  err,
+			}
+		}()
 	}
-	println(wg.DisplayName())
-	w.Display()
+
+	for range clients {
+		r := <-ch
+		println(r.name)
+		if r.err != nil {
+			println(r.err.Error())
+		} else {
+			r.w.Display()
+		}
+	}
+
 }

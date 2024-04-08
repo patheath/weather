@@ -18,10 +18,8 @@ func TestMainIntegration(t *testing.T) {
 
 	mainStdout := utils.CaptureStdout(main)
 
-	// Will fail is API is down but that is by design
-	n := strings.Count(mainStdout, "\n")
-	assert.Equal(t, n, 2*model.HOURS)
-
-	n = strings.Count(mainStdout, "The hour is")
-	assert.Equal(t, n, 2*model.HOURS)
+	// Will fail if API is down but that is by design
+	num_providers := 2
+	n := strings.Count(mainStdout, "The hour is")
+	assert.Equal(t, n, num_providers*model.HOURS)
 }
