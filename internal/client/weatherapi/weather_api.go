@@ -7,6 +7,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/patheath/weather/internal/model"
 )
@@ -153,18 +154,35 @@ func (wa WeatherApi) ReadResponse(body []byte) (*model.Weather, error) {
 		return nil, errors.New("No results from weatherapi.com provider")
 	}
 
-	n := min(len(result.Forecast.Forecastday[0].Hour), model.HOURS)
-	if n == 0 {
-		return nil, errors.New("No results from weatherapi.com provider")
+	// need to loop over from current hour until end of day
+	// pick up at next day
+	n := 0
+	hour := time.Now().Hour()// start showing the next hour
+	
+	day := 0
+	if hour == 23 {
+		hour = 0 // reset to the start of the next day
+		day += 1 // the next day
 	}
 
 	h := []model.Forecast{}
 	var f model.Forecast
-	for i, v := range result.Forecast.Forecastday[0].Hour[:n] {
-		f.Hour = i
+
+	for n < model.HOURS {
+		if len(result.Forecast.Forecastday[day].Hour) < 24 {
+			return nil, fmt.Errorf("less than 24 hours in the forecast day %d from weatherapi.com provider", day)
+		}
+		if hour > 23 {
+			hour = 0 // reset to the start of the next day
+			day += 1 // the next day
+		}
+		v := result.Forecast.Forecastday[day].Hour[hour]
+		f.Hour = n + 1 // in our forcast struct case hour is the hour from now.
 		f.Temp = int(v.TempF)
 		f.Short = v.Condition.Text
 		h = append(h, f)
+		n += 1
+		hour += 1
 	}
 
 	return &model.Weather{
