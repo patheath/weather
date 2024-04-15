@@ -16,5 +16,7 @@ Hard coded location: 02481
 
 # Run tests
 `make test` - run all
+
 `make test -s` - run unit tests only
+
 `make integ-test` - run integration tests
