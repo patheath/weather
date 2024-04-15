@@ -1,16 +1,20 @@
-# weather
+# Weather
 Practice Go by building a simple command line program for hourly weather
 
-Wellesley hourly forecast via the National Weather Service:
-https://api.weather.gov/gridpoints/BOX/64,85/forecast/hourly
+Hard coded location: 02481
 
-https://www.weather.gov/documentation/services-web-api
-
+# Weather providers:
+1. weather.gov
+2. weatherapi.com
+- Register for an account and set the token into WA_TOKEN `export WA_TOKEN="<token>"`
 
 # Basic flow
-1. run via command line 'weather'
-2. makes a call to weather.gov api
+1. run via command line './bin/weather' after building `make build`
+2. makes concurrent calls to weather providers
 3. returns data and displays pretty version of output
 4. exits
 
-
+# Run tests
+`make test` - run all
+`make test -s` - run unit tests only
+`make integ-test` - run integration tests

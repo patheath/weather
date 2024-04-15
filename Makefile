@@ -1,5 +1,5 @@
 build:
-	go build -o bin/main main.go
+	go build -o bin/weather main.go
 run:
 	go run main.go
 test:
@@ -7,6 +7,4 @@ test:
 integ-test:
 	go test -run Integration
 unit-test:
-	go test -v -short ./...
-test-build: build
-	bin/main
+	go test -short ./...
